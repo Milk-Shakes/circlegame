@@ -48,7 +48,7 @@ volatile int16_t encoderDelta;
 //Kickplate debounce
 
 volatile unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
-volatile unsigned long debounceDelay = 2;
+volatile unsigned long debounceDelay = 5;
 
 void EncoderReadCode( void * pvParameters ) {
   
@@ -61,8 +61,8 @@ void EncoderReadCode( void * pvParameters ) {
 }
 
 void drawPlayer(int pixelAddress) {
-  strip.ClearTo(RgbColour(ColourSaturation,ColourSaturation,ColourSaturation));
-  strip.SetPixelColour(pixelAddress, RgbColour(0,CharacterSaturation,0));
+  strip.ClearTo(RgbColor(ColourSaturation,ColourSaturation,ColourSaturation));
+  strip.SetPixelColor(pixelAddress, RgbColor(0,CharacterSaturation,0));
   strip.Show();
 }
 
