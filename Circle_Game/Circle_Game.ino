@@ -58,6 +58,7 @@ byte CurrentLevel = 1;
 byte NumberOfLevels = 3;
 bool Setup = false;
 bool firstrun = false;
+byte Lives = 3;
 
 byte EnemyArrayPosition = 0;
 byte EnemyArrayScale = 0;
@@ -162,7 +163,7 @@ void LevelSetup() {
     firstrun = true;
   }
   if (Setup == false) {
-    if (EnemyArrayPosition < EnemyArrayScale or EnemyArrayPosition < MovingEnemyArrayScale and Setup == false == false) {
+    if (EnemyArrayPosition < EnemyArrayScale or EnemyArrayPosition < MovingEnemyArrayScale and Setup == false) {
 
       CurrentEnemyposition = LevelRequest(CurrentLevel - 1, EnemyArrayPosition, 1);
       CurrentMovingEnemyposition = LevelRequest(CurrentLevel - 1, EnemyArrayPosition, 2);
@@ -238,40 +239,58 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  if (Setup == false) {
-    LevelSetup();
-    return;
+  if (GameLost == true & Lives > 0) {
+    Lives--;
+    Setup = false;
+    firstrun = false;
+    GameLost = false;
+  } else if (GameLost == true) {
+    CurrentLevel = 1;
+    Lives = 3;
+    Setup = false;
+    firstrun = false;
+    GameLost = false;
+  } else if (LevelWon == true) {
+  CurrentLevel++;
+  Setup = false;
+  firstrun = false;
+  LevelWon = false;
+}
+
+if (Setup == false) {
+  LevelSetup();
+  return;
+}
+
+if (((millis() - lastGameTickTime) > GameTickDelay)) {
+  Gametick++;
+  MovingEnemyArrayScale = MovingEnemyLevelSize(CurrentLevel - 1);
+  UpdatePosition = 0;
+  Updated = false;
+  lastGameTickTime = millis();
+}
+
+if (Updated == false) {
+  UpdateEnemies();
+}
+
+HomingDirection();
+drawPlayer(SmoothEncoderInput());
+
+if (Homed == false) {
+  if (digitalRead(HomingPoint) == 1 and ClockwiseSpinDirection == true) {
+    Homing(0);
+  } else if (digitalRead(HomingPoint) == 1 and ClockwiseSpinDirection == false) {
+    Homing(1);
   }
+}
 
-  if (((millis() - lastGameTickTime) > GameTickDelay)) {
-    Gametick++;
-    MovingEnemyArrayScale = MovingEnemyLevelSize(CurrentLevel - 1);
-    UpdatePosition = 0;
-    Updated = false;
-    lastGameTickTime = millis();
-  }
-
-  if (Updated == false) {
-    UpdateEnemies();
-  }
-
-  HomingDirection();
-  drawPlayer(SmoothEncoderInput());
-
-  if (Homed == false) {
-    if (digitalRead(HomingPoint) == 1 and ClockwiseSpinDirection == true) {
-      Homing(0);
-    } else if (digitalRead(HomingPoint) == 1 and ClockwiseSpinDirection == false) {
-      Homing(1);
-    }
-  }
-
-  Switch(digitalRead(KickPlateButton));
+Switch(digitalRead(KickPlateButton));
 
 
-  if (Homed == true and encodervalue > 30 and encodervalue < 300) {
-    Homed = false;
-  }
+if (Homed == true and encodervalue > 30 and encodervalue < 300) {
+  Homed = false;
+}
 
 
 }
