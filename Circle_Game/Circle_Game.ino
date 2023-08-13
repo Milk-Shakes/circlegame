@@ -181,6 +181,7 @@ void LevelSetup() {
     } else if (Setup == false) {
       FinishPosition = LevelRequest(CurrentLevel - 1, EnemyArrayPosition, 3);
       strip.SetPixelColor(FinishPosition, Finishcolour);
+      strip.Show();
       firstrun = false;
       Setup = true;
     }
